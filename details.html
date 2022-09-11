@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FETCH API</title>
+    <!-- CSS CODE HERE -->
+    <style>
+      #loader {
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+      }
+      .contact {
+        padding: 10px 40px;
+        background-color: black;
+        color: #fff;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+      #result {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loader">Loading...</div>
+
+    <div id="result"></div>
+
+    <a class="contact" href="contact.html"> Contact Us</a>
+  </body>
+  <!-- JAVASCRIPT CODE HERE -->
+  <script>
+    const loadingDiv = document.getElementById("loader");
+    const resultDiv = document.getElementById("result");
+    const queryString = window.location.search;
+    const urlParam = new URLSearchParams(queryString).get("id");
+    loadingDiv.style.display = "flex";
+    resultDiv.style.display = "none";
+    if (urlParam) {
+      fetch("https://api.coingecko.com/api/v3/coins/" + urlParam)
+        .then((res) => {
+          if (res.ok) return res.json();
+        })
+        .then((res) => {
+          loadingDiv.style.display = "none";
+          resultDiv.style.display = "block";
+
+          console.log(res);
+          const result = `
+                    <div class="single-container">
+                        <h2>
+                            ${res.name}
+                        </h2>
+                        <div>
+                                Price : $${res.market_data.current_price.usd}
+                        </div>
+                        <b>
+                            Symbol : ${res.symbol.toUpperCase()}
+                        </b>
+                    </div>
+                `;
+          resultDiv.innerHTML = result;
+        });
+    } else {
+      loadingDiv.style.display = "none";
+      resultDiv.style.display = "block";
+
+      resultDiv.innerHTML = "<h2 style='color: red;'>Error ID required</h2>";
+    }
+  </script>
+</html>
